@@ -2,7 +2,7 @@
 /**
  * lib-zandman
  *
- * Copyright (c) 2011, Dennis Becker.
+ * Copyright (c) 2012, Dennis Becker.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  *
  * @package    Zandman_Application_Resource
  * @author     Dennis Becker
- * @copyright  2011 Dennis Becker
+ * @copyright  2012 Dennis Becker
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/DennisBecker/lib-zandman
  */
@@ -47,7 +47,7 @@
  *
  * @package    Zandman_Application_Resource
  * @author     Dennis Becker
- * @copyright  2011 Dennis Becker
+ * @copyright  2012 Dennis Becker
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/DennisBecker/lib-zandman
  */
