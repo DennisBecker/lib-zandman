@@ -34,8 +34,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    Zandman_Translate
- * @subpackage Adapter
+ * @package    Zandman_Application_Resource
  * @author     Dennis Becker
  * @copyright  2012 Dennis Becker
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
@@ -43,68 +42,46 @@
  */
 
 /**
- * Extends Zend_Translate_Adapter to allow loading translate data from a database.
- * 
+ * Extends Zend_Application_Resource_Translate to allow loading translate data
+ * from a database. This application resource tries to preload
+ * Zend_Application_Resource_Db or Zend_Application_Resource_Multidb 
+ *
  * To use this adapter you have to do create a database model which implements
  * Zandman_Translate_Database_ModelInterface and return the array as described in
  * the PHP DocBlock.
  *
- * @package    Zandman_Translate
- * @subpackage Adapter
+ * @package    Zandman_Application_Resource
  * @author     Dennis Becker
  * @copyright  2012 Dennis Becker
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/DennisBecker/lib-zandman
  */
-class Zandman_Translate_Adapter_Database extends Zend_Translate_Adapter
+class Zandman_Application_Resource_Translate extends Zend_Application_Resource_Translate
 {
-    private $_data = array();
-    
-    /**
-     * Load translation data
-     *
-     * @param  string|array  $data
-     * @param  string        $locale  Locale/Language to add data for, identical with locale identifier,
-     *                                see Zend_Locale for more information
-     * @param  array         $options OPTIONAL Options to use
-     * @return array
-     */
-    protected function _loadTranslationData($data, $locale, array $options = array())
+    public function getTranslate()
     {
-        if (!isset($options['dbAdapter'])) {
-            throw new Zandman_Translate_Exception("dbAdapter not set in options");
+        $options = $this->getOptions();
+        
+        if ($options["adapter"] == "Zandman_Translate_Adapter_Database") {
+            $bootstrap = $this->getBootstrap();
+            $dbResource = null;
+            
+            try {
+            	$bootstrap->bootstrap('Db');
+            } catch (Zend_Application_Bootstrap_Exception $e) {
+            	$bootstrap->bootstrap('Multidb');
+            }
+            
+            if (isset($options["dbAdapter"])) {
+            	$dbResource = $bootstrap->getPluginResource('Multidb');
+            	$options["dbAdapter"] = $dbResource->getDb($options["dbAdapter"]);
+            } else {
+                $options["dbAdapter"] = Zend_Db_Table::getDefaultAdapter();
+            }
+            
+            $this->setOptions($options);
         }
         
-        if (!isset($options['dbModel'])) {
-            throw new Zandman_Translate_Exception("dbModel not set in options");
-        }
-        
-        $dbAdapter = $options['dbAdapter'];
-        $dbModel = $options['dbModel'];
-        
-        $translationModel = new $dbModel($dbAdapter);
-        
-        if (!$translationModel instanceof Zandman_Translate_Database_ModelInterface) {
-            throw new Zandman_Translate_Database_Exception(
-                "Database model does not implement Zandman_Translate_Database_ModelInterface");
-        }
-        
-        $data = $translationModel->getTranslations($locale);
-
-        if (!isset($this->_data[$locale])) {
-            $this->_data[$locale] = array();
-        }
-
-        $this->_data[$locale] = $data + $this->_data[$locale];
-        return $this->_data;
-    }
-
-    /**
-     * returns the adapters name
-     *
-     * @return string
-     */
-    public function toString() {
-        return "Database";
+        return parent::getTranslate();
     }
 }
