@@ -1,0 +1,13 @@
+{
+    "name": "dennisbecker/lib-zandman",
+    "description": "additional library for Zend Framework 1.11.x and newer",
+    "authors": [
+        {
+            "name": "Dennis Becker",
+            "email": "mail.dennisbecker@gmail.com"
+        }
+    ],
+    "require": {
+
+    }
+}
